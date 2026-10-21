@@ -74,19 +74,101 @@ function displayWorksLoadingError(gallery) {
 }
 
 /**
+ * Extrait les catégories uniques des projets
+ */
+function getCategories(works) {
+	const uniqueCategoryIds = new Set(); // Set des id uniques des catégories
+	const categories = []; // liste des catégories trouvées
+
+	// Parcourt chaque projet et ajoute sa catégorie si non présente à la liste des catégories uniques.
+	works.forEach((work) => {
+		if (!uniqueCategoryIds.has(work.category.id)) {
+			uniqueCategoryIds.add(work.category.id);
+			categories.push(work.category);
+		}
+	});
+
+	log(`${uniqueCategoryIds.size} catégories uniques trouvées.`);
+	log(uniqueCategoryIds);
+
+	log(`${categories.length} catégories trouvées.`);
+	log(categories);
+
+	return categories;
+}
+
+/**
+ * Crée un bouton de filtre.
+ */
+function createFilterButton(label, onClick) {
+	const button = document.createElement("button");
+
+	button.type = "button";
+	button.innerText = label;
+	button.addEventListener("click", onClick);
+
+	return button;
+}
+
+/**
+ * Génère le menu de filtres (bouton "Tous" + une catégorie par bouton)
+ * et filtre la galerie au clic.
+ */
+function displayFilters(filtersContainer, gallery, works) {
+	const buttons = [];
+
+	/**
+	 * Sélectionne un filtre et met à jour la galerie en fonction de la catégorie sélectionnée
+	 * button : Le bouton de filtre sélectionné
+	 * categoryId : L'ID de la catégorie à filtrer ou null pour "Tous"
+	 */
+	function selectFilter(button, categoryId) {
+		buttons.forEach((item) => item.classList.remove("active")); // Supprime la classe "active" de tous les boutons avant d'ajouter celle du bouton sélectionné.
+		button.classList.add("active"); // Ajoute la classe "active" au bouton sélectionné.
+
+		// Filtre les projets en fonction de la catégorie sélectionnée : 
+		// si "Tous" est sélectionné, on affiche tous les projets sinon on filtre les projets correspondant à la catégorie sélectionnée.
+		const filteredWorks =
+			categoryId === null
+				? works
+				: works.filter((work) => work.categoryId === categoryId);
+
+		log(`Filtre sélectionné : ${button.innerText} (${filteredWorks.length} projets).`);
+		displayWorks(gallery, filteredWorks);
+	}
+
+	const allButton = createFilterButton("Tous", () => selectFilter(allButton, null));
+	buttons.push(allButton); // Ajoute le bouton "Tous" à la liste des boutons de filtre.
+	allButton.classList.add("active"); // Bouton "Tous" actif par défaut. 
+
+	// Crée un bouton pour chaque catégorie et l'ajoute à la liste des boutons de filtre.
+	getCategories(works).forEach((category) => {
+		const button = createFilterButton(category.name, () =>
+			selectFilter(button, category.id),
+		);
+		buttons.push(button);
+	});
+
+	// Ajoute tous les boutons de filtre au conteneur des filtres.
+	buttons.forEach((button) => filtersContainer.appendChild(button));
+}
+
+/**
  * Initialise la galerie des projets en récupérant les données depuis l'API puis en les affichant.
  * Affiche un message d'erreur si le chargement échoue.
  */
 async function initGallery() {
 	const gallery = document.querySelector(".gallery");
+	const filtersContainer = document.querySelector(".filters");
 
-	if (!gallery) {
-		console.error("La galerie des projets est introuvable.");
+	if (!gallery || !filtersContainer) {
+		console.error("La galerie ou le menu de filtres est introuvable.");
 		return;
 	}
 
 	try {
 		const works = await getWorks();
+		displayFilters(filtersContainer, gallery, works);
 		displayWorks(gallery, works);
 	} catch (error) {
 		console.error("Impossible de charger les projets.", error);
