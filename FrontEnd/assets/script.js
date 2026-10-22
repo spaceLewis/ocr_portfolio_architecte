@@ -176,4 +176,26 @@ async function initGallery() {
 	}
 }
 
+/**
+ * Affiche le lien de déconnexion lorsqu'un token d'authentification est enregistré.
+ */
+function initAuthenticationLink() {
+	const authenticationLink = document.getElementById("authentication-link");
+
+	// Si aucun token, on ne fait rien pour laisser le lien d'authentification
+	if (!localStorage.getItem("token")) {
+		return;
+	}
+
+	authenticationLink.innerText = "logout";
+	authenticationLink.href = "./index.html";
+	// Listener pour gérer la déconnexion lorsqu'un utilisateur clique sur logout
+	authenticationLink.addEventListener("click", (event) => {
+		event.preventDefault();
+		localStorage.removeItem("token");
+		window.location.href = "./index.html";
+	});
+}
+
+initAuthenticationLink();
 initGallery();
