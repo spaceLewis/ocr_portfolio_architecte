@@ -33,17 +33,30 @@ async function getWorks() {
 /**
  * Crée un élément HTML représentant un projet.
  */
-function createWorkElement(work) {
+function createWorkElement(work, isModal = false) {
 	const figure = document.createElement("figure");
 	const image = document.createElement("img");
-	const caption = document.createElement("figcaption");
 
 	image.src = work.imageUrl;
 	image.alt = work.title;
-	caption.innerText = work.title;
-
 	figure.appendChild(image);
-	figure.appendChild(caption);
+
+	if (isModal) {
+		// Dans la modale : bouton de suppression au lieu de la légende
+		const deleteButton = document.createElement("button");
+		const deleteIcon = document.createElement("img");
+
+		deleteButton.type = "button";
+		deleteButton.className = "delete-work-button";
+		deleteIcon.src = "./assets/icons/delete.png";
+		deleteIcon.alt = "Supprimer";
+		deleteButton.appendChild(deleteIcon);
+		figure.appendChild(deleteButton);
+	} else {
+		const caption = document.createElement("figcaption");
+		caption.innerText = work.title;
+		figure.appendChild(caption);
+	}
 
 	return figure;
 }
@@ -51,12 +64,12 @@ function createWorkElement(work) {
 /**
  * Affiche la liste des projets dans la galerie.
  */
-function displayWorks(gallery, works) {
+function displayWorks(gallery, works, isModal = false) {
 	gallery.innerText = "";
 
     /* Ajoute chaque projet dans la galerie en créant et en ajoutant l'élément HTML associé */
 	works.forEach((work) => {
-		gallery.appendChild(createWorkElement(work));
+		gallery.appendChild(createWorkElement(work, isModal));
 	});
 
 	log("Les projets ont été ajoutés à la galerie.");
@@ -176,10 +189,34 @@ async function initGallery(isAdmin) {
 		}
 
 		displayWorks(gallery, works);
+
+		if (isAdmin) {
+			initModal(works);
+		}
 	} catch (error) {
 		console.error("Impossible de charger les projets.", error);
 		displayWorksLoadingError(gallery);
 	}
+}
+
+/**
+ * Initialise la modale d'édition des projets (ouverture, fermeture, affichage des projets).
+ */
+function initModal(works) {
+	const modal = document.getElementById("edit-modal");
+	const modalGallery = modal.querySelector(".modal-gallery");
+
+	// Listener pour ouvrir la modale lorsqu'on clique sur le bouton "Modifier les projets"
+	document.getElementById("edit-projects-button").addEventListener("click", () => {
+		displayWorks(modalGallery, works, true);
+		modal.hidden = false;
+	});
+
+	// Listener pour fermer la modale lorsqu'on clique sur le bouton de fermeture
+	document.getElementById("close-modal-button").addEventListener("click", () => {
+		modal.hidden = true;
+	});
+
 }
 
 /**

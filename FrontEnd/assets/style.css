@@ -299,3 +299,95 @@ body.login-page #login {
 	color: inherit;
 	font-weight: 500;
 }
+
+
+/* Modale d'édition des projets */
+.modal {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.3);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+}
+
+.modal[hidden] { /* forcer le masquage de la modale lorsqu'elle est cachée */
+	display: none;
+}
+
+.modal-content {
+	position: relative;
+	width: 630px;
+	max-width: 90%;
+	max-height: 90%;
+	padding: 70px 100px; /* Ajoute un padding interne à la modale */
+	background: white;
+	border-radius: 10px;
+	text-align: center;
+}
+
+/* Bouton de fermeture de la modale en haut à droite de la modale */
+.close-modal-button {
+	position: absolute;
+	top: 25px;
+	right: 25px;
+	background: none;
+	border: none;
+	cursor: pointer;
+}
+
+.modal-content h3 {
+	margin-bottom: 40px;
+	font-family: "Work Sans", sans-serif;
+	font-size: 26px;
+}
+
+.modal-gallery {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr); /* 5 colonnes de largeur égale */
+	gap: 10px;
+	padding-bottom: 40px;
+	margin-bottom: 40px;
+	border-bottom: 1px solid #b3b3b3;
+}
+
+.modal-gallery figure {
+	position: relative;
+	margin: 0;
+}
+
+.modal-gallery img {
+	width: 100%;
+	display: block;
+}
+
+/* bouton de suppression en haut à droite de l'image */
+.modal-gallery .delete-work-button {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 27px;
+	height: 27px;
+	padding: 0;
+	background: none;
+	border: none;
+	cursor: pointer;
+}
+
+.modal-gallery .delete-work-button img {
+	width: 27px;
+	margin: auto;
+	border-radius: 5px;
+}
+
+.add-photo-button {
+	padding: 10px 40px;
+	background: #1d6154;
+	color: white;
+	border: none;
+	border-radius: 60px;
+	font-family: "Syne", sans-serif;
+	font-weight: 700;
+	cursor: pointer;
+}
