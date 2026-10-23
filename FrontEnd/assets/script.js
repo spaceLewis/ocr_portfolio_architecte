@@ -191,21 +191,21 @@ function initAdminControls(isAdmin) {
 
 	if (isAdmin) {
 		editProjectsButton.hidden = false;
-	}
 
-	// Si pas admin, on ne fait rien pour laisser le lien d'authentification
-	if (!isAdmin) {
+		authenticationLink.innerText = "logout";
+		authenticationLink.href = "./index.html";
+		// Listener pour gérer la déconnexion lorsqu'un utilisateur clique sur logout
+		authenticationLink.addEventListener("click", (event) => {
+			event.preventDefault();
+			localStorage.removeItem("token");
+			window.location.href = "./index.html";
+		});
+		
+	}else{
+		// Si pas admin, on ne fait rien pour laisser le lien d'authentification
 		return;
 	}
 
-	authenticationLink.innerText = "logout";
-	authenticationLink.href = "./index.html";
-	// Listener pour gérer la déconnexion lorsqu'un utilisateur clique sur logout
-	authenticationLink.addEventListener("click", (event) => {
-		event.preventDefault();
-		localStorage.removeItem("token");
-		window.location.href = "./index.html";
-	});
 }
 
 
