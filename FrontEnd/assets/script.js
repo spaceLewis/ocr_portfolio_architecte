@@ -31,11 +31,40 @@ async function getWorks() {
 }
 
 /**
+ * Supprime un projet via l'API (token admin stocké au login) puis retire ses éléments de la page.
+ */
+async function deleteWork(workId) {
+	try {
+		const response = await fetch(`${worksApiUrl}/${workId}`, {
+			method: "DELETE",
+			headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+		});
+
+		if (!response.ok) {
+			throw new Error(`La suppression a échoué (${response.status}).`);
+		}
+
+		log(`Projet ${workId} supprimé.`);
+		// Retire le projet de la galerie principale et de la modale
+		document
+			.querySelectorAll(`[data-work-id="${workId}"]`)
+			.forEach((element) => element.remove()); // Supprime tous les éléments correspondant au projet supprimé
+	} catch (error) {
+		console.error("Impossible de supprimer le projet.", error);
+		alert("Le projet n'a pas pu être supprimé.");
+	}
+}
+
+/**
  * Crée un élément HTML représentant un projet.
  */
 function createWorkElement(work, isModal = false) {
 	const figure = document.createElement("figure");
 	const image = document.createElement("img");
+
+	figure.dataset.workId = work.id;
+
+	log(`Création de l'élément pour le projet ${work.id}`);
 
 	image.src = work.imageUrl;
 	image.alt = work.title;
@@ -50,6 +79,7 @@ function createWorkElement(work, isModal = false) {
 		deleteButton.className = "delete-work-button";
 		deleteIcon.src = "./assets/icons/delete.png";
 		deleteIcon.alt = "Supprimer";
+		deleteButton.addEventListener("click", () => deleteWork(work.id));
 		deleteButton.appendChild(deleteIcon);
 		figure.appendChild(deleteButton);
 	} else {
@@ -206,9 +236,10 @@ function initModal(works) {
 	const modal = document.getElementById("edit-modal");
 	const modalGallery = modal.querySelector(".modal-gallery");
 
+	displayWorks(modalGallery, works, true);
+
 	// Listener pour ouvrir la modale lorsqu'on clique sur le bouton "Modifier les projets"
 	document.getElementById("edit-projects-button").addEventListener("click", () => {
-		displayWorks(modalGallery, works, true);
 		modal.hidden = false;
 	});
 
