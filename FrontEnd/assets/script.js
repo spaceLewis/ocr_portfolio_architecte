@@ -331,6 +331,9 @@ function initAddWorkForm(modalGallery) {
 		showGalleryView();
 	});
 
+	// Vide le formulaire lorsqu'on ferme la modale
+	document.getElementById("close-modal-button").addEventListener("click", resetForm);
+
 	// Aperçu de l'image choisie
 	imageInput.addEventListener("change", () => {
 		const file = imageInput.files[0];
