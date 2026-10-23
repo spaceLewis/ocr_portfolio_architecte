@@ -157,7 +157,7 @@ function displayFilters(filtersContainer, gallery, works) {
  * Initialise la galerie des projets en récupérant les données depuis l'API puis en les affichant.
  * Affiche un message d'erreur si le chargement échoue.
  */
-async function initGallery() {
+async function initGallery(isAdmin) {
 	const gallery = document.querySelector(".gallery");
 	const filtersContainer = document.querySelector(".filters");
 
@@ -166,9 +166,15 @@ async function initGallery() {
 		return;
 	}
 
+	filtersContainer.style.display = isAdmin ? "none" : "";
+
 	try {
 		const works = await getWorks();
-		displayFilters(filtersContainer, gallery, works);
+
+		if (!isAdmin) {
+			displayFilters(filtersContainer, gallery, works);
+		}
+
 		displayWorks(gallery, works);
 	} catch (error) {
 		console.error("Impossible de charger les projets.", error);
@@ -177,13 +183,18 @@ async function initGallery() {
 }
 
 /**
- * Affiche le lien de déconnexion lorsqu'un token d'authentification est enregistré.
+ * Affiche les contrôles réservés à l'administrateur connecté.
  */
-function initAuthenticationLink() {
+function initAdminControls(isAdmin) {
 	const authenticationLink = document.getElementById("authentication-link");
+	const editProjectsButton = document.getElementById("edit-projects-button");
 
-	// Si aucun token, on ne fait rien pour laisser le lien d'authentification
-	if (!localStorage.getItem("token")) {
+	if (isAdmin) {
+		editProjectsButton.hidden = false;
+	}
+
+	// Si pas admin, on ne fait rien pour laisser le lien d'authentification
+	if (!isAdmin) {
 		return;
 	}
 
@@ -197,5 +208,12 @@ function initAuthenticationLink() {
 	});
 }
 
-initAuthenticationLink();
-initGallery();
+
+// Vérifie si l'utilisateur est loggué en admin
+let isAdmin = false; 
+if (localStorage.getItem("token")) {
+	isAdmin = true;
+}
+
+initAdminControls(isAdmin);
+initGallery(isAdmin);
