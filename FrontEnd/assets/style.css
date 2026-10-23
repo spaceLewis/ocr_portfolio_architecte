@@ -321,7 +321,7 @@ body.login-page #login {
 	width: 630px;
 	max-width: 90%;
 	max-height: 90%;
-	padding: 70px 100px; /* Ajoute un padding interne à la modale */
+	padding: 70px 100px 50px; /* Ajoute un padding interne à la modale */
 	background: white;
 	border-radius: 10px;
 	text-align: center;
@@ -349,22 +349,49 @@ body.login-page #login {
 	font-size: 26px;
 }
 
+/* Les deux vues de la modale ont exactement la même hauteur */
+#gallery-view,
+#add-view {
+	display: flex;
+	flex-direction: column;
+	height: 620px;
+	max-height: calc(90% - 140px); /* Ajuste la hauteur maximale de la modale */
+}
+
+#gallery-view .modal-gallery {
+	flex: 1;
+	overflow-y: auto; /* Permet le défilement vertical si le contenu dépasse la hauteur */
+}
+
+#add-view #add-work-form {
+	flex: 1; /* Permet au formulaire de prendre tout l'espace disponible */
+}
+
+#add-view #add-work-form hr {
+	margin-top: auto;
+}
+
 .modal-gallery {
 	display: grid;
-	grid-template-columns: repeat(5, 1fr); /* 5 colonnes de largeur égale */
-	gap: 10px;
-	padding-bottom: 40px;
-	margin-bottom: 40px;
+	grid-template-columns: repeat(5, 90px); /* 5 colonnes de 90px chacune */
+	justify-content: center;
+	grid-auto-rows: max-content;
+	gap: 30px 10px;
+	padding-bottom: 30px;
+	margin-bottom: 30px;
 	border-bottom: 1px solid #b3b3b3;
 }
 
 .modal-gallery figure {
 	position: relative;
+	width: fit-content; /* Ajuste la largeur du conteneur au contenu */
 	margin: 0;
 }
 
-.modal-gallery img {
-	width: 100%;
+.modal-gallery figure > img {
+	width: 90px;
+	height: auto;
+	object-fit: cover; /* Assure que l'image couvre entièrement le conteneur */
 	display: block;
 }
 
@@ -373,8 +400,8 @@ body.login-page #login {
 	position: absolute;
 	top: 5px;
 	right: 5px;
-	width: 27px;
-	height: 27px;
+	width: 17px;
+	height: 17px;
 	padding: 0;
 	background: none;
 	border: none;
@@ -382,7 +409,9 @@ body.login-page #login {
 }
 
 .modal-gallery .delete-work-button img {
-	width: 27px;
+	width: 17px;
+	height: 17px;
+	object-fit: contain; /* Assure que l'image ne déborde pas du conteneur */
 	margin: auto;
 	border-radius: 5px;
 }
