@@ -506,7 +506,9 @@ body.login-page #login {
 
 /* Bouton d'ajout de photo pour un nouveau projet */
 .add-photo-button {
-	padding: 10px 40px;
+	width: 260px;
+	margin: 0 auto;
+	padding: 12px 0;
 	background: #1d6154;
 	color: white;
 	border: none;
