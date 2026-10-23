@@ -448,6 +448,15 @@ body.login-page #login {
 	cursor: pointer;
 }
 
+.image-upload {
+	padding: 0;
+}
+
+.image-upload.has-image label,
+.image-upload.has-image p {
+	display: none;
+}
+
 /* Image d'aperçu dans la zone de téléchargement */
 .image-upload img {
 	height: 100%;
@@ -470,4 +479,24 @@ body.login-page #login {
 	font-family: "Syne", sans-serif;
 	font-weight: 700;
 	cursor: pointer;
+}
+
+/* Séparateur au-dessus du bouton Valider */
+#add-work-form hr {
+	width: 100%;
+	border: none;
+	border-top: 1px solid #b3b3b3;
+	margin: 0 0 30px;
+}
+
+/* Bouton Valider centré, grisé tant que le formulaire est incomplet */
+.validate-button {
+	width: 260px;
+	margin: 0 auto;
+	padding: 12px 0;
+}
+
+.validate-button:disabled {
+	background: #a7a7a7;
+	cursor: not-allowed;
 }

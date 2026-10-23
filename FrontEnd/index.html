@@ -85,9 +85,13 @@
 				<label for="work-title">Titre</label>
 				<input type="text" id="work-title">
 				<label for="work-category">Catégorie</label>
-				<select id="work-category"></select>
+				<select id="work-category">
+					<!-- Option vide par défaut -->
+					<option value="" selected></option>
+				</select>
 				<p id="form-error" class="form-error" hidden></p>
-				<button type="submit" class="add-photo-button">Valider</button>
+				<hr>
+				<button type="submit" id="validate-button" class="add-photo-button validate-button" disabled>Valider</button>
 			</form>
 		</div>
 	</div>

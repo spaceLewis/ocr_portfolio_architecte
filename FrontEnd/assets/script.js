@@ -294,15 +294,26 @@ function initAddWorkForm(modalGallery) {
 	const titleInput = document.getElementById("work-title");
 	const categorySelect = document.getElementById("work-category");
 	const preview = document.getElementById("image-preview");
+	const imageUpload = document.querySelector(".image-upload");
 	const error = document.getElementById("form-error");
+	const validateButton = document.getElementById("validate-button");
 
 	loadCategoryOptions(categorySelect);
+
+	// Active le bouton Valider uniquement quand l'image, le titre et la catégorie sont renseignés
+	function updateValidateButton() {
+		validateButton.disabled = !(imageInput.files[0] && titleInput.value.trim() && categorySelect.value);
+	}
+	form.addEventListener("input", updateValidateButton);
+	form.addEventListener("change", updateValidateButton);
 
 	// Réinitialise le formulaire lorsqu'on ouvre la vue ajout photo
 	function resetForm() {
 		form.reset();
 		preview.hidden = true;
+		imageUpload.classList.remove("has-image");
 		error.hidden = true;
+		updateValidateButton();
 	}
 
 	// Affiche un message d'erreur dans le formulaire
@@ -326,6 +337,7 @@ function initAddWorkForm(modalGallery) {
 		if (file) {
 			preview.src = URL.createObjectURL(file); // Affiche l'aperçu de l'image sélectionnée
 			preview.hidden = false;
+			imageUpload.classList.add("has-image"); // Masque le bouton et le texte d'aide
 		}
 	});
 
