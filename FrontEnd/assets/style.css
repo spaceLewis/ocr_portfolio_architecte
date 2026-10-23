@@ -381,6 +381,86 @@ body.login-page #login {
 	border-radius: 5px;
 }
 
+/* Masquage des éléments avec l'attribut hidden */
+[hidden] { /* Force le masquage des éléments avec l'attribut hidden */
+	display: none !important;
+}
+
+/* Bouton de retour en haut à gauche de la modale */
+.back-button {
+	position: absolute;
+	top: 25px;
+	left: 25px;
+	background: none;
+	border: none;
+	font-size: 24px;
+	cursor: pointer;
+}
+
+/* Formulaire d'ajout de projet */
+#add-work-form {
+	display: flex;
+	flex-direction: column;
+	text-align: left;
+}
+
+#add-work-form label,
+#add-work-form input,
+#add-work-form select {
+	font-family: "Work Sans", sans-serif;
+}
+
+/* Champs de texte et select du formulaire d'ajout de projet */
+#add-work-form input[type="text"],
+#add-work-form select {
+	height: 50px;
+	margin: 15px 0 30px;
+	padding: 0 15px;
+	border: none;
+	background: white;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09);
+}
+
+/* Zone de téléchargement de l'image */
+.image-upload {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 170px;
+	margin-bottom: 30px;
+	padding: 20px;
+	background: #e8f1f7;
+	justify-content: center;
+	font-size: 10px;
+}
+
+.image-upload input {
+	display: none;
+}
+
+/* Bouton de téléchargement de l'image */
+.upload-button {
+	padding: 10px 30px;
+	background: #cbd6dc;
+	border-radius: 50px;
+	color: #306685;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+/* Image d'aperçu dans la zone de téléchargement */
+.image-upload img {
+	height: 100%;
+}
+
+/* Message d'erreur du formulaire d'ajout de projet */
+.form-error {
+	margin-bottom: 20px;
+	color: red;
+	text-align: center;
+}
+
+/* Bouton d'ajout de photo pour un nouveau projet */
 .add-photo-button {
 	padding: 10px 40px;
 	background: #1d6154;

@@ -1,4 +1,5 @@
 const worksApiUrl = "http://localhost:5678/api/works";
+const categoriesApiUrl = "http://localhost:5678/api/categories";
 const debug = true;
 
 /**
@@ -246,8 +247,131 @@ function initModal(works) {
 	// Listener pour fermer la modale lorsqu'on clique sur le bouton de fermeture
 	document.getElementById("close-modal-button").addEventListener("click", () => {
 		modal.hidden = true;
+		showGalleryView();
 	});
 
+	initAddWorkForm(modalGallery);
+}
+
+// Affiche la vue galerie et masque la vue ajout photo.
+function showGalleryView() {
+	document.getElementById("gallery-view").hidden = false;
+	document.getElementById("add-view").hidden = true;
+}
+
+// Affiche la vue ajout photo et masque la vue galerie.
+function showAddView() {
+	document.getElementById("gallery-view").hidden = true;
+	document.getElementById("add-view").hidden = false;
+}
+
+/**
+ * Récupère les catégories depuis l'API et remplit le select du formulaire.
+ */
+async function loadCategoryOptions(select) {
+	try {
+		const response = await fetch(categoriesApiUrl);
+		const categories = await response.json();
+
+		categories.forEach((category) => {
+			const option = document.createElement("option");
+			option.value = category.id;
+			option.innerText = category.name;
+			select.appendChild(option);
+		});
+		select.value = ""; // Aucune catégorie sélectionnée par défaut
+	} catch (error) {
+		console.error("Impossible de charger les catégories.", error);
+	}
+}
+
+/**
+ * Initialise la vue "Ajout photo" : navigation, aperçu, validation et envoi à l'API.
+ */
+function initAddWorkForm(modalGallery) {
+	const form = document.getElementById("add-work-form");
+	const imageInput = document.getElementById("work-image");
+	const titleInput = document.getElementById("work-title");
+	const categorySelect = document.getElementById("work-category");
+	const preview = document.getElementById("image-preview");
+	const error = document.getElementById("form-error");
+
+	loadCategoryOptions(categorySelect);
+
+	// Réinitialise le formulaire lorsqu'on ouvre la vue ajout photo
+	function resetForm() {
+		form.reset();
+		preview.hidden = true;
+		error.hidden = true;
+	}
+
+	// Affiche un message d'erreur dans le formulaire
+	function showError(message) { 
+		error.innerText = message;
+		error.hidden = false;
+	}
+
+	// Listener pour ouvrir la vue ajout photo
+	document.getElementById("add-photo-button").addEventListener("click", showAddView);
+
+	// Listener pour revenir à la vue galerie depuis la vue ajout photo
+	document.getElementById("back-button").addEventListener("click", () => {
+		resetForm();
+		showGalleryView();
+	});
+
+	// Aperçu de l'image choisie
+	imageInput.addEventListener("change", () => {
+		const file = imageInput.files[0];
+		if (file) {
+			preview.src = URL.createObjectURL(file); // Affiche l'aperçu de l'image sélectionnée
+			preview.hidden = false;
+		}
+	});
+
+	form.addEventListener("submit", async (event) => {
+		event.preventDefault(); // Empêche le rechargement par défaut de la page lors de l'envoi du formulaire
+		const file = imageInput.files[0];
+
+		// Vérifie que tous les champs sont remplis
+		if (!file || !titleInput.value.trim() || !categorySelect.value) { 
+			showError("Veuillez choisir une image, un titre et une catégorie.");
+			return;
+		}
+		// Vérifie que la taille de l'image ne dépasse pas 4 Mo
+		if (file.size > 4 * 1024 * 1024) { // 4 Mo en octets
+			showError("L'image ne doit pas dépasser 4 Mo.");
+			return;
+		}
+
+		const formData = new FormData(); // Crée un nouvel objet FormData pour envoyer les données du formulaire
+		formData.append("image", file); // Ajoute l'image au FormData
+		formData.append("title", titleInput.value.trim()); // Ajoute le titre au FormData
+		formData.append("category", categorySelect.value); // Ajoute la catégorie au FormData
+
+		try {
+			const response = await fetch(worksApiUrl, {
+				method: "POST",
+				headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+				body: formData,
+			});
+
+			if (!response.ok) {
+				throw new Error(`L'ajout a échoué (${response.status}).`);
+			}
+
+			const work = await response.json();
+			// L'API renvoie le projet créé : on l'ajoute à la galerie et à la modale
+			document.querySelector(".gallery").appendChild(createWorkElement(work)); // Ajoute le projet à la galerie principale
+			modalGallery.appendChild(createWorkElement(work, true)); // Ajoute le projet à la modale de la galerie
+
+			resetForm(); // Réinitialise le formulaire après l'ajout du projet
+			showGalleryView(); // Affiche la vue de la galerie après l'ajout du projet
+		} catch (err) {
+			console.error("Impossible d'ajouter le projet.", err);
+			showError("Le projet n'a pas pu être ajouté.");
+		}
+	});
 }
 
 /**

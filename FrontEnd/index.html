@@ -65,9 +65,31 @@
 		<button id="close-modal-button" class="close-modal-button" type="button">
 			<img src="./assets/icons/close.png" alt="Fermer">
 		</button>
-		<h3>Galerie photo</h3>
-		<div class="modal-gallery"></div>
-		<button id="add-photo-button" class="add-photo-button" type="button">Ajouter une photo</button>
+		<!-- Vue 1 : galerie -->
+		<div id="gallery-view">
+			<h3>Galerie photo</h3>
+			<div class="modal-gallery"></div>
+			<button id="add-photo-button" class="add-photo-button" type="button">Ajouter une photo</button>
+		</div>
+		<!-- Vue 2 : formulaire d'ajout -->
+		<div id="add-view" hidden>
+			<button id="back-button" class="back-button" type="button">&larr;</button>
+			<h3>Ajout photo</h3>
+			<form id="add-work-form">
+				<div class="image-upload">
+					<label for="work-image" class="upload-button">+ Ajouter photo</label>
+					<input type="file" id="work-image" accept="image/png, image/jpeg">
+					<p>jpg, png : 4mo max</p>
+					<img id="image-preview" alt="" hidden>
+				</div>
+				<label for="work-title">Titre</label>
+				<input type="text" id="work-title">
+				<label for="work-category">Catégorie</label>
+				<select id="work-category"></select>
+				<p id="form-error" class="form-error" hidden></p>
+				<button type="submit" class="add-photo-button">Valider</button>
+			</form>
+		</div>
 	</div>
 </div>
 
