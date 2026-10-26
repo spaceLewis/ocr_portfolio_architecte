@@ -250,6 +250,14 @@ function initModal(works) {
 		showGalleryView();
 	});
 
+	// Listener pour fermer la modale lorsqu'on clique en dehors de la modale (sur le fond)
+	modal.addEventListener("click", (event) => {
+		if (event.target === modal) {
+			modal.hidden = true;
+			showGalleryView();
+		}
+	});
+
 	initAddWorkForm(modalGallery);
 }
 
