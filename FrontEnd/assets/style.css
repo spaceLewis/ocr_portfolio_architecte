@@ -168,8 +168,10 @@ li:hover {
 	color: #1D6154;
 	cursor: pointer;
 }
-.filters button.active,
-.filters button:hover {
+.filters button:hover { 
+	background: #f0fffc;
+}
+.filters button.active {
 	background: #1D6154;
 	color: #fff;
 }
