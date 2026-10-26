@@ -341,6 +341,11 @@ function initAddWorkForm(modalGallery) {
 
 	// Vide le formulaire lorsqu'on ferme la modale
 	document.getElementById("close-modal-button").addEventListener("click", resetForm);
+	document.getElementById("edit-modal").addEventListener("click", (event) => {
+		if (event.target.id === "edit-modal") { // Ferme la modale si on clique en dehors du contenu de la modale
+			resetForm();
+		}
+	});
 
 	// Aperçu de l'image choisie
 	imageInput.addEventListener("change", () => {
