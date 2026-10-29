@@ -155,46 +155,84 @@ function createFilterButton(label, onClick) {
 }
 
 /**
- * Génère le menu de filtres (bouton "Tous" + une catégorie par bouton)
- * et filtre la galerie au clic.
+ * Génère les filtres et les commandes de tri facultatives de la galerie.
  */
 function displayFilters(filtersContainer, gallery, works) {
-	const buttons = [];
+	const filterButtons = [];
+	const sortButtons = [];
+	let selectedCategoryId = null;
+	let sortDirection = null;
 
-	/**
-	 * Sélectionne un filtre et met à jour la galerie en fonction de la catégorie sélectionnée
-	 * button : Le bouton de filtre sélectionné
-	 * categoryId : L'ID de la catégorie à filtrer ou null pour "Tous"
-	 */
-	function selectFilter(button, categoryId) {
-		buttons.forEach((item) => item.classList.remove("active")); // Supprime la classe "active" de tous les boutons avant d'ajouter celle du bouton sélectionné.
-		button.classList.add("active"); // Ajoute la classe "active" au bouton sélectionné.
+	function displayFilteredWorks() {
+		const filteredWorks = works.filter(
+			(work) =>
+				selectedCategoryId === null || work.categoryId === selectedCategoryId,
+		);
 
-		// Filtre les projets en fonction de la catégorie sélectionnée : 
-		// si "Tous" est sélectionné, on affiche tous les projets sinon on filtre les projets correspondant à la catégorie sélectionnée.
-		const filteredWorks =
-			categoryId === null
-				? works
-				: works.filter((work) => work.categoryId === categoryId);
+		if (sortDirection) {
+			filteredWorks.sort((firstWork, secondWork) => {
+				const comparison = firstWork.title.localeCompare(
+					secondWork.title,
+					"fr",
+					{ numeric: true },
+				);
 
-		log(`Filtre sélectionné : ${button.innerText} (${filteredWorks.length} projets).`);
+				return sortDirection === "asc" ? comparison : -comparison;
+			});
+		}
+
+		log(`Affichage de ${filteredWorks.length} projets.`);
 		displayWorks(gallery, filteredWorks);
 	}
 
-	const allButton = createFilterButton("Tous", () => selectFilter(allButton, null));
-	buttons.push(allButton); // Ajoute le bouton "Tous" à la liste des boutons de filtre.
-	allButton.classList.add("active"); // Bouton "Tous" actif par défaut. 
+	function selectFilter(button, categoryId) {
+		filterButtons.forEach((item) => item.classList.remove("active"));
+		button.classList.add("active");
+		selectedCategoryId = categoryId;
+		displayFilteredWorks();
+	}
 
-	// Crée un bouton pour chaque catégorie et l'ajoute à la liste des boutons de filtre.
+	function selectSort(button, direction) {
+		if (sortDirection === direction) {
+			sortDirection = null;
+			button.classList.remove("active");
+		} else {
+			sortButtons.forEach((item) => item.classList.remove("active"));
+			button.classList.add("active");
+			sortDirection = direction;
+		}
+
+		displayFilteredWorks();
+	}
+
+	const allButton = createFilterButton("Tous", () => selectFilter(allButton, null));
+	filterButtons.push(allButton);
+	allButton.classList.add("active");
+
 	getCategories(works).forEach((category) => {
 		const button = createFilterButton(category.name, () =>
 			selectFilter(button, category.id),
 		);
-		buttons.push(button);
+		filterButtons.push(button);
 	});
 
-	// Ajoute tous les boutons de filtre au conteneur des filtres.
-	buttons.forEach((button) => filtersContainer.appendChild(button));
+	const ascendingButton = createFilterButton("↑", () =>
+		selectSort(ascendingButton, "asc"),
+	);
+	ascendingButton.setAttribute("aria-label", "Trier les projets de A à Z");
+	ascendingButton.title = "Trier les projets de A à Z";
+	sortButtons.push(ascendingButton);
+
+	const descendingButton = createFilterButton("↓", () =>
+		selectSort(descendingButton, "desc"),
+	);
+	descendingButton.setAttribute("aria-label", "Trier les projets de Z à A");
+	descendingButton.title = "Trier les projets de Z à A";
+	sortButtons.push(descendingButton);
+
+	filterButtons.forEach((button) => filtersContainer.appendChild(button));
+	sortButtons.forEach((button) => filtersContainer.appendChild(button));
+	displayFilteredWorks();
 }
 
 /**
@@ -217,11 +255,8 @@ async function initGallery(isAdmin) {
 
 		if (!isAdmin) {
 			displayFilters(filtersContainer, gallery, works);
-		}
-
-		displayWorks(gallery, works);
-
-		if (isAdmin) {
+		} else {
+			displayWorks(gallery, works);
 			initModal(works);
 		}
 	} catch (error) {
