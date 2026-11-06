@@ -470,5 +470,23 @@ if (localStorage.getItem("token")) {
 	isAdmin = true;
 }
 
+function changeTheme(mode){
+	if(mode === "dark"){
+		document.body.style.backgroundColor = "#121212";
+		document.body.style.color = "#ffffff";
+	}else if(mode === "light"){
+		document.body.style.backgroundColor = "#ffffff";
+		document.body.style.color = "#000000";
+	}
+}
+// Ajoute un listener pour le bouton de changement de thème
+const themeToggleButton = document.getElementById("theme-toggle-button");
+themeToggleButton.addEventListener("click", () => {
+	const currentMode = document.body.style.backgroundColor === "rgb(18, 18, 18)" ? "dark" : "light";
+	const newMode = currentMode === "dark" ? "light" : "dark";
+	changeTheme(newMode);
+});
+
 initAdminControls(isAdmin);
 initGallery(isAdmin);
+changeTheme("light"); // Définit le thème par défaut sur clair
