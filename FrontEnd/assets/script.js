@@ -472,7 +472,7 @@ if (localStorage.getItem("token")) {
 
 function changeTheme(mode){
 	if(mode === "dark"){
-		document.body.style.backgroundColor = "#121212";
+		document.body.style.backgroundColor = "#292929";
 		document.body.style.color = "#ffffff";
 	}else if(mode === "light"){
 		document.body.style.backgroundColor = "#ffffff";
